@@ -1,19 +1,13 @@
 package SM;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+
 import javax.swing.JTable;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 public class SaleJFrame implements ActionListener{
@@ -29,15 +23,24 @@ public class SaleJFrame implements ActionListener{
     JTextField total_txt = new JTextField();
     JLabel vat = new JLabel("VAT");
     JTextField vat_txt = new JTextField();
+    JLabel discount = new JLabel("Discount");
+    JTextField discount_txt = new JTextField();
     JLabel grandTotal = new JLabel("Grand Total");
     JTextField grandTotal_txt = new JTextField();
+    
+    Map strategies = new HashMap<String, String>();
+    
+    
+    String[] PricingStrategy  = {"Senior Discount", "Eid Discout 100 Tk. Over 1000 Tk", "Best for Customer", "Best for Store"};
+    JComboBox DDPricingStrategy = new JComboBox(PricingStrategy);
+    JButton calculateDiscount = new JButton("Calculate Discount");
     
     int flag = 0;
     JTable table;
     DefaultTableModel model;
     
     ProcessSaleContraller psc = new ProcessSaleContraller();
-    Vector <SalesLineItem> sli = new Vector <SalesLineItem>(10);
+    
     
     public SaleJFrame(){
         model = new DefaultTableModel();
@@ -50,6 +53,8 @@ public class SaleJFrame implements ActionListener{
                 
     }
     public void gui(){
+        DDPricingStrategy.setSelectedIndex(3);
+        
         NewSale.setBounds(100, 25, 100, 25);
         ItemId.setBounds(25, 75, 100, 25);
         ItemId_txt.setBounds(100, 75, 200, 25);
@@ -62,9 +67,12 @@ public class SaleJFrame implements ActionListener{
         total_txt.setBounds(500, 370, 100, 25);
         vat.setBounds(425, 400, 100, 25);
         vat_txt.setBounds(500, 400, 100, 25);
-        grandTotal.setBounds(425, 430, 100, 25);
-        grandTotal_txt.setBounds(500, 430, 100, 25);
-        
+        discount.setBounds(425, 430, 100, 25);
+        discount_txt.setBounds(500, 430, 100, 25);
+        grandTotal.setBounds(425, 460, 100, 25);
+        grandTotal_txt.setBounds(500, 460, 100, 25);
+        DDPricingStrategy.setBounds(100, 370, 150, 25);
+        calculateDiscount.setBounds(100, 460, 150, 25);
         
         window.add(NewSale);
         window.add(ItemId);
@@ -81,13 +89,17 @@ public class SaleJFrame implements ActionListener{
         window.add(total_txt);
         window.add(vat);
         window.add(vat_txt);
+        window.add(discount);
+        window.add(discount_txt);
         window.add(grandTotal);
         window.add(grandTotal_txt);
-        
+        window.add(DDPricingStrategy);
+        window.add(calculateDiscount);
         
         NewSale.addActionListener(this);
         AddItem.addActionListener(this);
-        
+        DDPricingStrategy.addActionListener(this);
+        calculateDiscount.addActionListener(this);
         window.setLayout(null);
         window.setSize(800,600);
         window.setLocation(250,100);
@@ -97,12 +109,13 @@ public class SaleJFrame implements ActionListener{
 
     }
     @Override
-    public void actionPerformed(ActionEvent e){
+    public void actionPerformed(ActionEvent e) {
         if(e.getSource() == NewSale){
             ItemId_txt.setText("");
             Quantity_txt.setText("");
             total_txt.setText("");
             vat_txt.setText("");
+            discount_txt.setText("");
             grandTotal_txt.setText("");
             psc.makeNewSale();
             for(int i = 0; i<flag; i++)
@@ -110,37 +123,39 @@ public class SaleJFrame implements ActionListener{
             flag = 0;   
         }
         if(e.getSource() == AddItem){
-            
             int iId = Integer.parseInt(ItemId_txt.getText());
             int q = Integer.parseInt(Quantity_txt.getText());
             ItemId_txt.setText("");
             Quantity_txt.setText("");
             psc.addItem(iId, q);
             
-            sli = psc.getSalesLineItemList();
-            if(sli.get(flag).getValidId() == false){
-                sli.remove(flag);
+            if(psc.sale.sli.get(flag).getValidId() == false){
+                psc.sale.sli.remove(flag);
                 JOptionPane.showMessageDialog(null, "Invalid ID", "Error", JOptionPane.PLAIN_MESSAGE);
-                
             }
-            else{
-                try {
-                    ProductSpecification ps = new ProductSpecification();
-                    
-                    ps = psc.getProductSpecification(iId);
-                    total_txt.setText(Integer.toString(psc.getTotalPrice()));
-                    
-                    vat_txt.setText(Integer.toString(psc.sale.getVATAmount()));
-                    
-                    grandTotal_txt.setText(Integer.toString(psc.sale.getGrandTotal()));
-                    
-                    model.addRow(new Object[]{ps.getId(), ps.getName(), ps.getPrice(), q, sli.get(flag).getSubTotal()});
-                    flag++;
-                } catch (Exception ex) {
-                    Logger.getLogger(SaleJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            else{ 
+                total_txt.setText(Integer.toString(psc.sale.getPreDiscountTotal()));            
+                model.addRow(new Object[]{psc.getProductSpecification(iId).getId(), psc.getProductSpecification(iId).getName(), psc.getProductSpecification(iId).getPrice(), q, psc.sale.sli.get(flag).getSubTotal()});
+                flag++;
             }
-        }           
-    }	
+        }
+        if(e.getSource() == calculateDiscount){
+           
+            String strategy = (String)DDPricingStrategy.getSelectedItem();
+            strategies.put("Senior Discount", "PercentageDiscountPricingStrategy");
+            strategies.put("Eid Discout 100 Tk. Over 1000 Tk", "AbsoluteDiscountOverThresholdPricingStrategy");
+            strategies.put("Best for Customer", "CompositeBestForCustomerPricingStrategy");
+            strategies.put("Best for Store", "CompositeBestForStorePricingStrategy");
+            psc.setPricingStrategy((String) strategies.get(strategy));
+            vat_txt.setText(Integer.toString(psc.getVAT()));
+            discount_txt.setText(Integer.toString(psc.getDiscount()));
+            grandTotal_txt.setText(Integer.toString(psc.getTotalPrice()));
+            
+           
+        }
+    }
+    public static void main(String[] args){
+        SaleJFrame sjf = new SaleJFrame();
+        sjf.gui();
+    }
 }
-

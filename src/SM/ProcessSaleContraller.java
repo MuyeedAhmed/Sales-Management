@@ -3,9 +3,9 @@ package SM;
 import java.util.*;
 
 public class ProcessSaleContraller {
-    Sale sale = new Sale();
+    Sale sale= new Sale();
     public ProcessSaleContraller(){
-
+        
     }
     public void makeNewSale(){
         sale.emptySalesLineItems();
@@ -20,8 +20,16 @@ public class ProcessSaleContraller {
         SaleFactory sf = new SaleFactory();
         return sf.getProductSpecification(id);
     }
-
+    public int getVAT(){
+        return sale.getVATAmount();
+    }
+    public int getDiscount(){
+        return sale.getPreDiscountTotal() - sale.getTotal();
+    }
     public int getTotalPrice(){
-        return sale.getTotal();
+        return sale.getGrandTotal();
+    }
+    public void setPricingStrategy(String s){
+        sale.setStrategy(s);
     }
 }

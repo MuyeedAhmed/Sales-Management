@@ -6,9 +6,7 @@ public class SalesLineItem {
     
     private boolean validId = true;
     
-    public SalesLineItem(){
-
-    }
+    public SalesLineItem(){}
     public SalesLineItem(int id, int quantity) {
         SaleFactory sf = new SaleFactory();
         ps = sf.getProductSpecification(id);

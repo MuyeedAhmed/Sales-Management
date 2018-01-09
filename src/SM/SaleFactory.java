@@ -1,5 +1,6 @@
 package SM;
 
+import java.io.File;
 import java.util.*;
 
 public class SaleFactory {
@@ -69,14 +70,30 @@ public class SaleFactory {
     }
     public IVATCalculator getVatCalculator() throws Exception{
         if(vatCalculator == null){
-            //String className = System.getProperty(vatCalculator.class.name);
-            //String className = System.getProperty("SM.MyVATCalculator");
             
+            //String className = System.getProperty(vatcalculator.class.name);
+            
+            //className = System.getProperty("MyVATCalculator.class.name");
+            //className = System.getProperty(MyVATCalculator.class.getCanonicalName());
+            //String className = System.getProperty("src\\SM\\MyVATCalculator.class.name");
+         
             //vatCalculator = (IVATCalculator)Class.forName(className).newInstance();
             
+            //System.out.println(className);
             
+            /*
+            //Working Way 1
+            String className;
             vatCalculator = (IVATCalculator)Class.forName("SM.BDVATAdapter").newInstance();
-        }
+            */
+            
+            
+            //Working Way 2
+            String className = new Scanner(new File("vatcalculator.txt")).useDelimiter("\\Z").next();
+            className = "SM." + className;
+            vatCalculator = (IVATCalculator)Class.forName(className).newInstance();
+            
+}
         return vatCalculator;
     }
 }
