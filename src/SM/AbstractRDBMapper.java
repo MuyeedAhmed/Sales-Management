@@ -12,7 +12,7 @@ public abstract class AbstractRDBMapper extends AbstractPersistenceMapper{
     public String tableName;
     private String host = "jdbc:derby://localhost:1527/DBRecord";
     private String uName = "akib";
-    private String uPass= "130636";
+    private String uPass= "123";
     Connection con;
     public AbstractRDBMapper(String tableName){
         try {

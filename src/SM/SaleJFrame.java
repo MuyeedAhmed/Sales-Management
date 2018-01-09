@@ -113,7 +113,7 @@ public class SaleJFrame extends JPanel implements ActionListener{
         window.add(grandTotal_txt);
         window.add(DDPricingStrategy);
         window.add(calculateDiscount);
-        
+               
         NewSale.addActionListener(this);
         AddItem.addActionListener(this);
         DDPricingStrategy.addActionListener(this);
