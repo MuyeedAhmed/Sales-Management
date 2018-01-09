@@ -19,6 +19,7 @@ public abstract class AbstractRDBMapper extends AbstractPersistenceMapper{
             this.tableName = tableName;
             con = DriverManager.getConnection( host, uName, uPass );
         } catch (SQLException ex) {
+            System.out.print("nein");
             Logger.getLogger(AbstractRDBMapper.class.getName()).log(Level.SEVERE, null, ex);
         }      
     }
@@ -34,9 +35,8 @@ public abstract class AbstractRDBMapper extends AbstractPersistenceMapper{
         try {
             String key = Integer.toString(oid);
             Statement stmt = con.createStatement();
-            String SQL = "SELECT * FROM " + tableName + " WHERE ITEM_ID = " + key;
+            String SQL = "SELECT * FROM APP." + tableName + " WHERE ID = " + key;
             ResultSet dbRec = stmt.executeQuery(SQL);
-             
             return dbRec;
         } catch (SQLException ex) {
             Logger.getLogger(AbstractRDBMapper.class.getName()).log(Level.SEVERE, null, ex);

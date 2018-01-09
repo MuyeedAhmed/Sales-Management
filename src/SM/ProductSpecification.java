@@ -5,6 +5,7 @@ public class ProductSpecification {
     private String name;
     private String description;
     private int price;
+    IManufacturer manufacturer;
 
     public ProductSpecification(int id, String name, String description, int price) {
         this.id = id;
@@ -43,5 +44,18 @@ public class ProductSpecification {
     }
     public void setPrice(int price) {
         this.price = price;
+    }
+    
+    public IManufacturer getManufacturer() {
+        return manufacturer;
+    }
+    public void setManufacturer(IManufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+    public String getManufacturerName(){
+        return manufacturer.getName();
+    }
+    public String getManufacturerAddress(){
+        return manufacturer.getAddress();
     }
 }

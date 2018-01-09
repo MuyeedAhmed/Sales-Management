@@ -8,9 +8,10 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
-public class SaleJFrame implements ActionListener{
+public class SaleJFrame extends JPanel implements ActionListener{
     JFrame window = new JFrame("Sale Management");
 
     JButton NewSale = new JButton("New Sale");
@@ -30,7 +31,6 @@ public class SaleJFrame implements ActionListener{
     
     Map strategies = new HashMap<String, String>();
     
-    
     String[] PricingStrategy  = {"Senior Discount", "Eid Discout 100 Tk. Over 1000 Tk", "Best for Customer", "Best for Store"};
     JComboBox DDPricingStrategy = new JComboBox(PricingStrategy);
     JButton calculateDiscount = new JButton("Calculate Discount");
@@ -49,9 +49,27 @@ public class SaleJFrame implements ActionListener{
         model.addColumn("Unit Price");
         model.addColumn("Quantity");
         model.addColumn("Sub Total");
-        table = new JTable(model);
-                
+        
+        table = new JTable(model) {
+            @Override
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+                int realColumnIndex = convertColumnIndexToModel(colIndex);
+                int id = (int) getValueAt(rowIndex, 0);
+                tip = "Manufacturer Name: "
+                       + psc.getProductSpecification(id).getManufacturerName()
+                       + ", Address: " 
+                       + psc.getProductSpecification(id).getManufacturerAddress()
+                       ;                 
+                return tip;
+            }          
+        };  
+        
     }
+    
     public void gui(){
         DDPricingStrategy.setSelectedIndex(3);
         
@@ -104,9 +122,8 @@ public class SaleJFrame implements ActionListener{
         window.setSize(800,600);
         window.setLocation(250,100);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setVisible(true);
         window.setResizable(false);
-
+        window.setVisible(true);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -135,12 +152,18 @@ public class SaleJFrame implements ActionListener{
             }
             else{ 
                 total_txt.setText(Integer.toString(psc.sale.getPreDiscountTotal()));            
-                model.addRow(new Object[]{psc.getProductSpecification(iId).getId(), psc.getProductSpecification(iId).getName(), psc.getProductSpecification(iId).getPrice(), q, psc.sale.sli.get(flag).getSubTotal()});
+                
+                model.addRow(new Object[]{
+                    psc.getProductSpecification(iId).getId(), 
+                    psc.getProductSpecification(iId).getName(), 
+                    psc.getProductSpecification(iId).getPrice(), 
+                    q, 
+                    psc.sale.sli.get(flag).getSubTotal()
+                });
                 flag++;
             }
         }
-        if(e.getSource() == calculateDiscount){
-            
+        if(e.getSource() == calculateDiscount){            
             String strategy = (String)DDPricingStrategy.getSelectedItem();
             strategies.put("Senior Discount", "PercentageDiscountPricingStrategy");
             strategies.put("Eid Discout 100 Tk. Over 1000 Tk", "AbsoluteDiscountOverThresholdPricingStrategy");

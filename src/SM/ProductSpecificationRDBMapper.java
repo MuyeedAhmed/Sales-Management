@@ -19,6 +19,7 @@ public class ProductSpecificationRDBMapper extends AbstractRDBMapper{
                 ps.setName(dbRec.getString("NAME"));
                 ps.setPrice(dbRec.getInt("PRICE"));
                 ps.setDescription(dbRec.getString("DESCRIPTION"));
+                ps.setManufacturer(new ManufacturerProxy(dbRec.getInt("MANUFACTURER_ID")));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProductSpecificationRDBMapper.class.getName()).log(Level.SEVERE, null, ex);

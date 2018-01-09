@@ -21,8 +21,8 @@ public class SaleRDBMapper extends AbstractRDBMapper{
             Sale sale = (Sale)oj;
             int saleTotal = sale.getSaleTotal();
             Statement stmt = con.createStatement();
-            //String sql = "INSERT INTO Sale VALUES (" + oid + ", " + saleTotal + ", " + sale.getVATAmount() +", " + (sale.getPreDiscountTotal() - sale.getTotal())+ ")";
-            String sql = "INSERT INTO Sale VALUES (" + oid +  ", " + false +", " + true + ", " + saleTotal +")";
+            String sql = "INSERT INTO APP.Sale (VAT, DISCOUNT, SALE_TOTAL)VALUES (" + sale.getVATAmount() +", " + (sale.getPreDiscountTotal() - sale.getTotal())+ ", " + saleTotal + ")";
+            System.out.println(sql);
             stmt.executeUpdate(sql);
         } catch (SQLException ex) {
             Logger.getLogger(SaleRDBMapper.class.getName()).log(Level.SEVERE, null, ex);

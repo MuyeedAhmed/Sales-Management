@@ -11,6 +11,7 @@ public class PersistenceFacade {
         try {
             mappers.put(Class.forName("SM.ProductSpecification"), new ProductSpecificationRDBMapper("ProductSpecification"));
             mappers.put(Class.forName("SM.Sale"), new SaleRDBMapper("Sale"));
+            mappers.put(Class.forName("SM.Manufacturer"), new ManufacturerRDBMapper("Manufacturer"));
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(PersistenceFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
