@@ -150,7 +150,8 @@ public class SaleJFrame implements ActionListener{
             vat_txt.setText(Integer.toString(psc.getVAT()));
             discount_txt.setText(Integer.toString(psc.getDiscount()));
             grandTotal_txt.setText(Integer.toString(psc.getTotalPrice()));
-            
+            new SaleFrame1().initialize(psc.sale);
+            psc.setSaleTotal();
         }
     }
     public static void main(String[] args){

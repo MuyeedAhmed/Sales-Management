@@ -2,66 +2,26 @@ package SM;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SaleFactory {
     static SaleFactory instance;
     IVATCalculator vatCalculator;
-    Vector <ProductSpecification> psList = new Vector<ProductSpecification>(10);
     
     public SaleFactory(){
         
-        ProductSpecification ps1 = new ProductSpecification();
-        ps1.setId(1);
-        ps1.setName("Rice");
-        ps1.setDescription("");
-        ps1.setPrice(40);
-        psList.add(ps1);
-        ProductSpecification ps2 = new ProductSpecification();
-        ps2.setId(2);
-        ps2.setName("Potato");
-        ps2.setDescription("");
-        ps2.setPrice(30);
-        psList.add(ps2);
-        ProductSpecification ps3 = new ProductSpecification();
-        ps3.setId(3);
-        ps3.setName("Onion");
-        ps3.setDescription("");
-        ps3.setPrice(80);
-        psList.add(ps3);
-        ProductSpecification ps4 = new ProductSpecification();
-        ps4.setId(4);
-        ps4.setName("Wheat");
-        ps4.setDescription("");
-        ps4.setPrice(50);
-        psList.add(ps4);
-        ProductSpecification ps5 = new ProductSpecification();
-        ps5.setId(5);
-        ps5.setName("Suger");
-        ps5.setDescription("");
-        ps5.setPrice(70);
-        psList.add(ps5);
-        ProductSpecification ps6 = new ProductSpecification();
-        ps6.setId(6);
-        ps6.setName("Salt");
-        ps6.setDescription("");
-        ps6.setPrice(45);
-        psList.add(ps6);
-        ProductSpecification ps7 = new ProductSpecification();
-        ps7.setId(7);
-        ps7.setName("Garlic");
-        ps7.setDescription("");
-        ps7.setPrice(65);
-        psList.add(ps7);
-
     }
     public ProductSpecification getProductSpecification(int id){
-
-        for(int i = 0; i < psList.size(); i++){
-            if(psList.get(i).getId() == id){
-                return psList.get(i);
-            }
+        ProductSpecification ps = new ProductSpecification();
+        try {
+            PersistenceFacade pf = new PersistenceFacade();
+            Class c = Class.forName("SM.ProductSpecification");
+            ps = (ProductSpecification) pf.get(id, c);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SaleFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return ps;
     }
     public static synchronized SaleFactory getInstance(){
         if(instance == null)
@@ -70,30 +30,11 @@ public class SaleFactory {
     }
     public IVATCalculator getVatCalculator() throws Exception{
         if(vatCalculator == null){
-            
-            //String className = System.getProperty(vatcalculator.class.name);
-            
-            //className = System.getProperty("MyVATCalculator.class.name");
-            //className = System.getProperty(MyVATCalculator.class.getCanonicalName());
-            //String className = System.getProperty("src\\SM\\MyVATCalculator.class.name");
-         
-            //vatCalculator = (IVATCalculator)Class.forName(className).newInstance();
-            
-            //System.out.println(className);
-            
-            /*
-            //Working Way 1
-            String className;
-            vatCalculator = (IVATCalculator)Class.forName("SM.BDVATAdapter").newInstance();
-            */
-            
-            
-            //Working Way 2
+
             String className = new Scanner(new File("vatcalculator.txt")).useDelimiter("\\Z").next();
             className = "SM." + className;
             vatCalculator = (IVATCalculator)Class.forName(className).newInstance();
-            
-}
+        }
         return vatCalculator;
     }
 }

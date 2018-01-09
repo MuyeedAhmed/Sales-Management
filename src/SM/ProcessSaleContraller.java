@@ -3,9 +3,9 @@ package SM;
 import java.util.*;
 
 public class ProcessSaleContraller {
-    Sale sale= new Sale();
+    Sale sale;
     public ProcessSaleContraller(){
-        
+        sale = new Sale();
     }
     public void makeNewSale(){
         sale.emptySalesLineItems();
@@ -27,11 +27,11 @@ public class ProcessSaleContraller {
         return sale.getPreDiscountTotal() - sale.getTotal();
     }
     public int getTotalPrice(){
-        new SaleFrame1().initialize(sale);
-        sale.setTotal(sale.getGrandTotal()); 
         return sale.getGrandTotal();
     }
-    
+    public void setSaleTotal(){
+        sale.setSaleTotal(getTotalPrice());
+    }
     public void setPricingStrategy(String s){
         sale.setStrategy(s);
     }

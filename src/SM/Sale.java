@@ -1,17 +1,18 @@
 package SM;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Sale {
-    Vector <SalesLineItem> sli = new Vector <SalesLineItem>(10);
+    Vector <SalesLineItem> sli;
     private String strategy;
-    private int total;
-    //ArrayList propertyListener = new ArrayList();
+    private int saleTotal;
+    private static AtomicInteger ID_GENERATOR = new AtomicInteger(1000);
     Vector <PropertyListener> propertyListener = new Vector<>(2);
     public Sale(){
-        
+        sli = new Vector <SalesLineItem>(10);
     }
     public Vector<SalesLineItem> getSli() {
         return sli;
@@ -31,6 +32,7 @@ public class Sale {
     public void addSaleLineItem(int id, int quantity){
         SalesLineItem item = new SalesLineItem(id, quantity);
         sli.add(item);
+        
     }
     public int getPreDiscountTotal(){
         int total = 0;
@@ -42,7 +44,6 @@ public class Sale {
     
     public int getTotal(){
         try {
-            //System.out.println("strategy " + this.strategy);
             ISalePricingStrategy isps = (ISalePricingStrategy)Class.forName(this.strategy).newInstance();
             return isps.getTotal(this);           
         } catch (Exception ex) { Logger.getLogger(Sale.class.getName()).log(Level.SEVERE, null, ex);}
@@ -61,10 +62,16 @@ public class Sale {
         }
         return 0;
     }
+    public int getSaleTotal(){
+        return this.saleTotal;
+    }
     //Assignment 3 2
-    public void setTotal(int newTotal){
-        this.total = newTotal;
-        publishPropertyEvent("sale.total", total);
+    public void setSaleTotal(int newTotal){
+        this.saleTotal = newTotal;
+        PersistenceFacade pf = new PersistenceFacade();
+        int customerID = ID_GENERATOR.getAndIncrement();
+        pf.put(customerID, this);
+        publishPropertyEvent("sale.total", saleTotal);
     }
     public void addPropertyListener(PropertyListener lis){
         propertyListener.add(lis);
