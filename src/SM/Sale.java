@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 public class Sale {
     Vector <SalesLineItem> sli = new Vector <SalesLineItem>(10);
     private String strategy;
-   
+    private int total;
+    //ArrayList propertyListener = new ArrayList();
+    Vector <PropertyListener> propertyListener = new Vector<>(2);
     public Sale(){
         
     }
@@ -46,9 +48,7 @@ public class Sale {
         } catch (Exception ex) { Logger.getLogger(Sale.class.getName()).log(Level.SEVERE, null, ex);}
         return 0;
     }
-    
-    
-    
+  
     public int getGrandTotal() {
         return this.getTotal() + this.getVATAmount();
     }
@@ -60,6 +60,18 @@ public class Sale {
             Logger.getLogger(Sale.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
+    }
+    //Assignment 3 2
+    public void setTotal(int newTotal){
+        this.total = newTotal;
+        publishPropertyEvent("sale.total", total);
+    }
+    public void addPropertyListener(PropertyListener lis){
+        propertyListener.add(lis);
+    }
+    public void publishPropertyEvent(String name, int value){
+        for(int i = 0; i < propertyListener.size(); i++)
+            propertyListener.get(i).onPropertyEvent(this, name, value); 
     }
 }
 

@@ -140,7 +140,7 @@ public class SaleJFrame implements ActionListener{
             }
         }
         if(e.getSource() == calculateDiscount){
-           
+            
             String strategy = (String)DDPricingStrategy.getSelectedItem();
             strategies.put("Senior Discount", "PercentageDiscountPricingStrategy");
             strategies.put("Eid Discout 100 Tk. Over 1000 Tk", "AbsoluteDiscountOverThresholdPricingStrategy");
@@ -151,7 +151,6 @@ public class SaleJFrame implements ActionListener{
             discount_txt.setText(Integer.toString(psc.getDiscount()));
             grandTotal_txt.setText(Integer.toString(psc.getTotalPrice()));
             
-           
         }
     }
     public static void main(String[] args){

@@ -27,8 +27,11 @@ public class ProcessSaleContraller {
         return sale.getPreDiscountTotal() - sale.getTotal();
     }
     public int getTotalPrice(){
+        new SaleFrame1().initialize(sale);
+        sale.setTotal(sale.getGrandTotal()); 
         return sale.getGrandTotal();
     }
+    
     public void setPricingStrategy(String s){
         sale.setStrategy(s);
     }
